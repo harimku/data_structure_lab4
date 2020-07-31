@@ -4,7 +4,7 @@ from collections import Counter
 import sys
 
 # Create a tree node
-class TreeNode(object):
+class TreeNode:
     def __init__(self, key):
         self.key = key
         self.left = None
@@ -13,7 +13,7 @@ class TreeNode(object):
 
 
 # AVL Tree
-class AVLTree(object):
+class AVLTree:
     def insert_node(self, root, key):
         if not root:
             return TreeNode(key)
@@ -79,6 +79,7 @@ class AVLTree(object):
             return root
         return self.getMinValueNode(root.left)
 
+    # Horizontal tree output function
     def printIterative(self, root):
         levels = []
         curr_level = []
@@ -150,7 +151,7 @@ def main():
     
     # Re-ordered number set
     print('--------------- Test 2 ----------------')
-    arr = [42, 68, 35, 1, 25, 63, 70, 59, 65, 79]
+    arr = [42, 68, 1, 25, 35, 70, 59, 63, 65, 79]
     avl2 = AVLTree()
     avl2_root = None
     for i in arr:
