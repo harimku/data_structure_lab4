@@ -1,7 +1,6 @@
 from array import *
 import numpy as np
 from collections import Counter
-import sys
 
 # Create a tree node
 class TreeNode:
@@ -14,72 +13,80 @@ class TreeNode:
 
 # AVL Tree
 class AVLTree:
-    def insert_node(self, root, key):
-        if not root:
-            return TreeNode(key)
-        elif key < root.key:
-            root.left = self.insert_node(root.left, key)
-        else:
-            root.right = self.insert_node(root.right, key)
+    def __init__(self):
+        self.root = None
+        self.cur_balance_factor = None
 
-        root.height = 1 + max(self.getHeight(root.left),
-                              self.getHeight(root.right))
-
-        balanceFactor = self.getBalance(root)
-        if balanceFactor > 1:
-            if key < root.left.key:
-                return self.rightRotate(root)
-            else:
-                root.left = self.leftRotate(root.left)
-                return self.rightRotate(root)
-
-        if balanceFactor < -1:
-            if key > root.right.key:
-                return self.leftRotate(root)
-            else:
-                root.right = self.rightRotate(root.right)
-                return self.leftRotate(root)
-
-        return root
-
-    def leftRotate(self, z):
-        y = z.right
-        T2 = y.left
-        y.left = z
-        z.right = T2
-        z.height = 1 + max(self.getHeight(z.left),
-                           self.getHeight(z.right))
-        y.height = 1 + max(self.getHeight(y.left),
-                           self.getHeight(y.right))
-        return y
-
-    def rightRotate(self, z):
-        y = z.left
-        T3 = y.right
-        y.right = z
-        z.left = T3
-        z.height = 1 + max(self.getHeight(z.left),
-                           self.getHeight(z.right))
-        y.height = 1 + max(self.getHeight(y.left),
-                           self.getHeight(y.right))
-        return y
+    def getRoot(self):
+        return self.root
 
     def getHeight(self, root):
-        if not root:
+        if root is None:
             return 0
         return root.height
 
     def getBalance(self, root):
-        if not root:
+        if root is None:
             return 0
         return self.getHeight(root.left) - self.getHeight(root.right)
 
-    def getMinValueNode(self, root):
-        if root is None or root.left is None:
-            return root
-        return self.getMinValueNode(root.left)
+    def checkBalance(self, root):
+        balance_factor = self.getBalance(root)
+        if(balance_factor > 1):
+            return True
+        elif(balance_factor < -1):
+            return False
+        else: # balance_factor = 0 meaning it is balanced 
+            return None
 
-    # Horizontal tree output function
+    def checkHeight(self, root):
+        largest_height = sorted([self.getHeight(root.left), self.getHeight(root.right)])[1]
+        return (1 + largest_height)
+
+    def insert_node(self, root, key):
+        if root is None:
+            return TreeNode(key)
+        elif key >= root.key:
+            root.right = self.insert_node(root.right, key)
+        else:
+            root.left = self.insert_node(root.left, key)
+        root.height = self.checkHeight(root)
+        # check for balance and deal with it accordingly
+        balance = self.checkBalance(root)
+        if balance is not None:
+            if balance:
+                if key >= root.left.key:
+                    root.left = self.leftRotate(root.left)
+                    return self.rightRotate(root)
+                else:
+                    return self.rightRotate(root)
+            else:
+                if key <= root.right.key:
+                    root.right = self.rightRotate(root.right)
+                    return self.leftRotate(root)
+                else:
+                    return self.leftRotate(root)
+        return root
+
+    def leftRotate(self, root):
+        other = root.right
+        temp = other.left
+        other.left = root
+        root.right = temp
+        root.height = self.checkHeight(root)
+        other.height = self.checkHeight(other)
+        return other
+
+    def rightRotate(self, root):
+        other = root.left
+        temp = other.right
+        other.right = root
+        root.left = temp
+        root.height = self.checkHeight(root)
+        other.height = self.checkHeight(other)
+        return other
+
+    # Horizontal tree output function (lab 3)
     def printIterative(self, root):
         levels = []
         curr_level = []
@@ -127,19 +134,19 @@ class AVLTree:
                         next_out += "- "
             level_out = next_out
 
-        
 
 def main():       
     ## Automated Test 
-    # Level ordered numbers set
+    # Level ordered numbers set (Given in lab 4 specification)
     print('------------- Comparison --------------')
     arr= [42, 25, 68, 1, 35, 63, 70, 59, 65, 79]
-    avl3 = AVLTree()
-    avl3_root = None
+    avl = AVLTree()
+    avl_root = None
     for i in arr:
-        avl3_root = avl3.insert_node(avl3_root, i)
-    avl3.printIterative(avl3_root)
-    
+        avl_root = avl.insert_node(avl_root, i)
+    avl.printIterative(avl_root)
+    print('')
+
     # Original number set
     print('--------------- Test 1 ----------------')
     arr = [42, 68, 35, 1, 70, 25, 79, 59, 63, 65]
@@ -148,7 +155,8 @@ def main():
     for i in arr:
         avl1_root = avl1.insert_node(avl1_root, i)
     avl1.printIterative(avl1_root)
-    
+    print('')
+
     # Re-ordered number set
     print('--------------- Test 2 ----------------')
     arr = [42, 68, 1, 25, 35, 70, 59, 63, 65, 79]
@@ -158,7 +166,7 @@ def main():
         avl2_root = avl2.insert_node(avl2_root, i)
     avl2.printIterative(avl2_root)
     print('')
-    
+    print('-------------- Finished ---------------')
 
 if __name__ == '__main__':
     main()
