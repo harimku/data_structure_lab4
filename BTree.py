@@ -24,7 +24,7 @@ class BTree:
         if root is None:
             return 0
         return root.height
-    
+
     def checkHeight(self, root): 
         if root is None: 
             return 0
@@ -37,7 +37,7 @@ class BTree:
 
         lh = self.checkHeight(root.left) 
         rh = self.checkHeight(root.right) 
-    
+
         if (abs(lh - rh) <= 1) and self.checkBalance( 
         root.left) is True and self.checkBalance(root.right) is True: 
             return True
@@ -61,7 +61,7 @@ class BTree:
             nodes.append(root) 
             self.storeNodes(nodes, root.right) 
             return None
-    
+
     def reTree(self, nodes, start, end): 
         if (end < start): 
             return None
@@ -76,7 +76,7 @@ class BTree:
         nodes=[] 
         self.storeNodes(nodes, root) 
         return self.reTree(nodes, 0, len(nodes)-1) 
-    
+
     # Horizontal tree output function (Lab 3)
     def printIterative(self, root):
         levels = []
@@ -197,4 +197,4 @@ def main():
     print('-------------- Finished ---------------')
 
 if __name__ == '__main__':
-    main()
+    main() 
